@@ -13,4 +13,11 @@ class Item extends Model
         'stok',
         'price',
     ];
+
+    public function typeGalon()
+    {
+        return $this->belongsTo(TypeGalon::class, 'type_galon_id');
+    }
+
+
 }
