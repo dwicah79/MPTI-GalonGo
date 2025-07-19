@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,13 +32,30 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->label('Nama Pelanggan')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('phone')
+                    ->label('No HP')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('address')
+                    ->label('Alamat')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('created_at')
+                    ->label('Tanggal Dibuat')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -57,8 +75,30 @@ class CustomerResource extends Resource
     {
         return [
             'index' => Pages\ListCustomers::route('/'),
-            'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            // 'create' => Pages\CreateCustomer::route('/create'),
+            // 'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationSort(): ?int
+    {
+        return 5;
+    }
+
+    public static function getLabel(): string
+    {
+        return 'Pelanggan';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Pelanggan';
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+
 }
