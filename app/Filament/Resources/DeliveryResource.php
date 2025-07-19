@@ -61,4 +61,8 @@ class DeliveryResource extends Resource
             'edit' => Pages\EditDelivery::route('/{record}/edit'),
         ];
     }
+    public static function getNavigationSort(): ?int
+    {
+        return 4;
+    }
 }
