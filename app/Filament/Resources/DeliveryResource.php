@@ -77,4 +77,14 @@ class DeliveryResource extends Resource
     {
         return 4;
     }
+
+    public static function getLabel(): string
+    {
+        return 'Pengantaran';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Pengantaran';
+    }
 }
