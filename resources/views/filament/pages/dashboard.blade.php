@@ -1,5 +1,5 @@
 <x-filament::page>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-6">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2  md:grid-cols-3 mb-6">
         {{-- Kapasitas Air --}}
         <div
             class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex items-center space-x-4 border-l-4 border-blue-500 dark:border-blue-400">
@@ -44,6 +44,18 @@
             </div>
         </div>
 
+        <div
+            class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex items-center space-x-4 border-l-4 border-purple-500 dark:border-purple-400">
+            <div class="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
+                <x-heroicon-o-banknotes class="w-6 h-6 text-purple-600 dark:text-purple-300" />
+            </div>
+            <div>
+                <div class="text-sm text-gray-500 dark:text-gray-300">Total Pengeluaran</div>
+                <div class="text-xl font-bold text-gray-800 dark:text-white">Rp {{ number_format($totalPengeluaran) }}
+                </div>
+            </div>
+        </div>
+
         {{-- Total Transaksi --}}
         <div
             class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex items-center space-x-4 border-l-4 border-red-500 dark:border-red-400">
@@ -83,11 +95,18 @@
                 data: {
                     labels: {!! json_encode($chartLabels) !!},
                     datasets: [{
-                        label: 'Total Penjualan',
-                        data: {!! json_encode($chartData) !!},
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4,
-                    }]
+                            label: 'Total Pendapatan',
+                            data: {!! json_encode($chartData) !!},
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)', // biru
+                            borderRadius: 4,
+                        },
+                        {
+                            label: 'Total Pengeluaran',
+                            data: {!! json_encode($chartDataPengeluaran) !!},
+                            backgroundColor: 'rgba(192, 38, 211, 0.7)', // ungu
+                            borderRadius: 4,
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -95,8 +114,14 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return 'Rp ' + new Intl.NumberFormat().format(context.parsed.y);
+                                    return context.dataset.label + ': Rp ' + new Intl.NumberFormat().format(context
+                                        .parsed.y);
                                 }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#fff' // agar di dark mode tetap terlihat
                             }
                         }
                     },
@@ -106,13 +131,18 @@
                                 autoSkip: false,
                                 maxRotation: 90,
                                 minRotation: 45,
+                                color: '#ccc'
                             }
                         },
                         y: {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Jumlah Penjualan (Rp)'
+                                text: 'Jumlah (Rp)',
+                                color: '#ccc'
+                            },
+                            ticks: {
+                                color: '#ccc'
                             }
                         }
                     }

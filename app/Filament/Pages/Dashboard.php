@@ -15,6 +15,9 @@ class Dashboard extends Page
     public $stokGasTabung;
     public $totalPendapatan;
     public $totalTransaksi;
+    public $totalPengeluaran;
+    public $chartDataPengeluaran = [];
+
     public $chartLabels = [];
     public $chartData = [];
 
@@ -24,6 +27,7 @@ class Dashboard extends Page
         $this->stokGasTabung = DB::table('items')->where('type', 'Gas')->sum('stok');
         $this->totalPendapatan = DB::table('new_transactions')->sum('harga_total');
         $this->totalTransaksi = DB::table('new_transactions')->count();
+        $this->totalPengeluaran = DB::table('other_transactions')->sum('price');
 
         $filter = request('filter', 'daily');
 
@@ -31,37 +35,48 @@ class Dashboard extends Page
         $now = now();
 
         if ($filter === 'monthly') {
-            // Ambil transaksi bulanan per bulan dalam tahun ini
-            $data = DB::table('new_transactions')
+            $dataPendapatan = DB::table('new_transactions')
                 ->selectRaw('MONTH(created_at) as month, SUM(harga_total) as total')
                 ->whereYear('created_at', $now->year)
                 ->groupBy('month')
                 ->orderBy('month')
                 ->pluck('total', 'month');
 
-            $this->chartLabels = collect(range(1, 12))->map(function ($m) {
-                return \Carbon\Carbon::create()->month($m)->format('F');
-            })->toArray();
+            $dataPengeluaran = DB::table('other_transactions')
+                ->selectRaw('MONTH(created_at) as month, SUM(price) as total')
+                ->whereYear('created_at', $now->year)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->pluck('total', 'month');
 
-            $this->chartData = collect(range(1, 12))->map(fn($m) => $data->get($m, 0))->toArray();
+            $this->chartLabels = collect(range(1, 12))->map(fn($m) => \Carbon\Carbon::create()->month($m)->format('F'))->toArray();
+
+            $this->chartData = collect(range(1, 12))->map(fn($m) => $dataPendapatan->get($m, 0))->toArray();
+            $this->chartDataPengeluaran = collect(range(1, 12))->map(fn($m) => $dataPengeluaran->get($m, 0))->toArray();
         } elseif ($filter === 'yearly') {
-            // Ambil transaksi 5 tahun terakhir
             $startYear = $now->copy()->subYears(4)->year;
 
-            $data = DB::table('new_transactions')
+            $dataPendapatan = DB::table('new_transactions')
                 ->selectRaw('YEAR(created_at) as year, SUM(harga_total) as total')
                 ->whereYear('created_at', '>=', $startYear)
                 ->groupBy('year')
                 ->orderBy('year')
                 ->pluck('total', 'year');
 
+            $dataPengeluaran = DB::table('other_transactions')
+                ->selectRaw('YEAR(created_at) as year, SUM(price) as total')
+                ->whereYear('created_at', '>=', $startYear)
+                ->groupBy('year')
+                ->orderBy('year')
+                ->pluck('total', 'year');
+
             $this->chartLabels = range($startYear, $now->year);
-            $this->chartData = collect($this->chartLabels)->map(fn($y) => $data->get($y, 0))->toArray();
+            $this->chartData = collect($this->chartLabels)->map(fn($y) => $dataPendapatan->get($y, 0))->toArray();
+            $this->chartDataPengeluaran = collect($this->chartLabels)->map(fn($y) => $dataPengeluaran->get($y, 0))->toArray();
         } else {
-            // Harian dalam bulan ini
             $daysInMonth = $now->daysInMonth;
 
-            $data = DB::table('new_transactions')
+            $dataPendapatan = DB::table('new_transactions')
                 ->selectRaw('DAY(created_at) as day, SUM(harga_total) as total')
                 ->whereYear('created_at', $now->year)
                 ->whereMonth('created_at', $now->month)
@@ -69,9 +84,19 @@ class Dashboard extends Page
                 ->orderBy('day')
                 ->pluck('total', 'day');
 
+            $dataPengeluaran = DB::table('other_transactions')
+                ->selectRaw('DAY(created_at) as day, SUM(price) as total')
+                ->whereYear('created_at', $now->year)
+                ->whereMonth('created_at', $now->month)
+                ->groupBy('day')
+                ->orderBy('day')
+                ->pluck('total', 'day');
+
             $this->chartLabels = collect(range(1, $daysInMonth))->map(fn($d) => str_pad($d, 2, '0', STR_PAD_LEFT))->toArray();
-            $this->chartData = collect(range(1, $daysInMonth))->map(fn($d) => $data->get($d, 0))->toArray();
+            $this->chartData = collect(range(1, $daysInMonth))->map(fn($d) => $dataPendapatan->get($d, 0))->toArray();
+            $this->chartDataPengeluaran = collect(range(1, $daysInMonth))->map(fn($d) => $dataPengeluaran->get($d, 0))->toArray();
         }
+
     }
 
 }
