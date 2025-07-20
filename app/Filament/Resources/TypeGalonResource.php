@@ -19,7 +19,7 @@ class TypeGalonResource extends Resource
 {
     protected static ?string $model = TypeGalon::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-beaker';
     protected static ?string $navigationLabel = 'Jenis Galon';
     protected static ?string $navigationGroup = 'Master Data';
 
