@@ -95,4 +95,14 @@ class ItemResource extends Resource
             'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }
+
+    public static function getLabel(): string
+    {
+        return 'Data Barang';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Data Barang';
+    }
 }
