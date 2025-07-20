@@ -17,7 +17,7 @@ class CreateNewTransaction extends CreateRecord
     {
         $customer = Customer::firstOrCreate(
             ['name' => $data['customer_name']],
-            ['phone' => $data['customer_phone']]
+            ['phone' => $data['customer_phone']],
         );
 
         $data['customer_id'] = $customer->id;
@@ -97,5 +97,12 @@ class CreateNewTransaction extends CreateRecord
         }
 
         $item->save();
+        $this->redirect(static::getResource()::getUrl('index'));
     }
+
+    protected function getCreatedNotificationRedirectUrl(): ?string
+    {
+        return static::getResource()::getUrl('index');
+    }
+
 }
