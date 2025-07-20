@@ -14,6 +14,10 @@ class ListNewTransactions extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('laporan')
+                ->label('Laporan Penjualan')
+                ->url(LaporanPenjualan::getUrl())
+                ->icon('heroicon-o-document-text'),
         ];
     }
 }
