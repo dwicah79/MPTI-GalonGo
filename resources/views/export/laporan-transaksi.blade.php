@@ -10,10 +10,34 @@
             font-size: 12px;
         }
 
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+            color: #007BFF;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         th,
@@ -22,13 +46,26 @@
             padding: 5px;
             text-align: left;
         }
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
+        }
     </style>
 </head>
 
 <body>
-    <h2>Laporan Transaksi</h2>
-    <p>Periode: {{ $from }} - {{ $to }}</p>
+    <div class="header">
+        <h1>Galon Go</h1>
+        <p>Laporan Transaksi dan Pengeluaran</p>
+        <p>Periode: {{ $from }} - {{ $to }}</p>
+    </div>
 
+    {{-- Laporan Transaksi --}}
+    <div class="section-title">Laporan Transaksi</div>
     <table>
         <thead>
             <tr>
@@ -58,10 +95,45 @@
             @endphp
             <tr>
                 <td colspan="6" style="text-align: left;"><strong>Total:</strong></td>
-                <td>Rp{{ number_format($total, 0, ',', '.') }}</td>
+                <td><strong>Rp{{ number_format($total, 0, ',', '.') }}</strong></td>
             </tr>
         </tbody>
     </table>
+
+    {{-- Laporan Pengeluaran --}}
+    @if (!empty($expenses) && $expenses->count())
+        <div class="section-title">Laporan Pengeluaran</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Pengeluaran</th>
+                    <th>Tanggal</th>
+                    <th>Jumlah</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($expenses as $j => $out)
+                    <tr>
+                        <td>{{ $j + 1 }}</td>
+                        <td>{{ $out->kurir->name ?? '-' }}</td>
+                        <td>{{ $out->description }}</td>
+                        <td>{{ $out->created_at->format('d/m/Y') ?? '-' }}</td>
+                        <td>Rp{{ number_format($out->price, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+                @php
+                    $totalPengeluaran = $expenses->sum('price');
+                @endphp
+                <tr>
+                    <td colspan="4" style="text-align: left;"><strong>Total:</strong></td>
+                    <td><strong>Rp{{ number_format($totalPengeluaran, 0, ',', '.') }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
+
 </body>
 
 </html>

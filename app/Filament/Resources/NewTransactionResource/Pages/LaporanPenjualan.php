@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\NewTransactionResource\Pages;
 
 use Filament\Forms;
-use Filament\Pages\Actions\Action;
-use Filament\Resources\Pages\Page;
-use App\Filament\Resources\NewTransactionResource;
 use App\Models\NewTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\OtherTransaction;
+use Filament\Pages\Actions\Action;
+use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
+use App\Filament\Resources\NewTransactionResource;
 
 class LaporanPenjualan extends Page
 {
@@ -20,6 +21,8 @@ class LaporanPenjualan extends Page
     public $from_date;
     public $to_date;
     public Collection $data;
+    public Collection $expenses;
+
 
     public static function getNavigationLabel(): string
     {
@@ -31,11 +34,13 @@ class LaporanPenjualan extends Page
         $this->from_date = now()->startOfMonth()->format('Y-m-d');
         $this->to_date = now()->format('Y-m-d');
         $this->data = collect();
+        $this->expenses = collect();
     }
 
     public function generateReport()
     {
         $this->data = NewTransaction::whereBetween('created_at', [$this->from_date, $this->to_date])->get();
+        $this->expenses = OtherTransaction::whereBetween('created_at', [$this->from_date, $this->to_date])->get();
     }
 
     public function exportPdf()
@@ -43,10 +48,12 @@ class LaporanPenjualan extends Page
         $from = $this->from_date . ' 00:00:00';
         $to = $this->to_date . ' 23:59:59';
 
-        $data = NewTransaction::whereBetween('created_at', [$from, $to])->get();
+        $sales = NewTransaction::whereBetween('created_at', [$from, $to])->get();
+        $expenses = OtherTransaction::whereBetween('created_at', [$from, $to])->get();
 
         $pdf = Pdf::loadView('export.laporan-transaksi', [
-            'data' => $data,
+            'data' => $sales,
+            'expenses' => $expenses,
             'from' => $this->from_date,
             'to' => $this->to_date,
         ]);
@@ -55,6 +62,7 @@ class LaporanPenjualan extends Page
             echo $pdf->stream();
         }, 'laporan-transaksi-' . now()->format('Ymd_His') . '.pdf');
     }
+
 
 
     protected function getFormSchema(): array
