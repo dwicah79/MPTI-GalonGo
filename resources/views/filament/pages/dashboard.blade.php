@@ -55,6 +55,17 @@
                 </div>
             </div>
         </div>
+        <div
+            class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 flex items-center space-x-4 border-l-4 border-purple-500 dark:border-purple-400">
+            <div class="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
+                <x-heroicon-o-banknotes class="w-6 h-6 text-purple-600 dark:text-purple-300" />
+            </div>
+            <div>
+                <div class="text-sm text-gray-500 dark:text-gray-300">Laba Bersih</div>
+                <div class="text-xl font-bold text-gray-800 dark:text-white">Rp {{ number_format($pendapatanBersih) }}
+                </div>
+            </div>
+        </div>
 
         {{-- Total Transaksi --}}
         <div
