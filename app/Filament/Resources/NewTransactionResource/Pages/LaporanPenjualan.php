@@ -40,7 +40,11 @@ class LaporanPenjualan extends Page
 
     public function exportPdf()
     {
-        $data = NewTransaction::whereBetween('created_at', [$this->from_date, $this->to_date])->get();
+        $from = $this->from_date . ' 00:00:00';
+        $to = $this->to_date . ' 23:59:59';
+
+        $data = NewTransaction::whereBetween('created_at', [$from, $to])->get();
+
         $pdf = Pdf::loadView('export.laporan-transaksi', [
             'data' => $data,
             'from' => $this->from_date,
@@ -51,6 +55,7 @@ class LaporanPenjualan extends Page
             echo $pdf->stream();
         }, 'laporan-transaksi-' . now()->format('Ymd_His') . '.pdf');
     }
+
 
     protected function getFormSchema(): array
     {
@@ -67,7 +72,7 @@ class LaporanPenjualan extends Page
     protected function getActions(): array
     {
         return [
-            // Action::make('Generate')->action('generateReport'),
+            Action::make('Generate')->action('generateReport'),
             Action::make('Download PDF')->action('exportPdf')->label('Export PDF')->color('success'),
         ];
     }

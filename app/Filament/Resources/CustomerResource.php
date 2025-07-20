@@ -45,6 +45,8 @@ class CustomerResource extends Resource
                     ->label('Alamat')
                     ->searchable()
                     ->sortable()
+                    ->limit(50)
+                    ->tooltip(fn($record) => $record->address)
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')

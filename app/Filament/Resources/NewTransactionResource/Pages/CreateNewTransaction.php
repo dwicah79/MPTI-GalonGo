@@ -17,15 +17,19 @@ class CreateNewTransaction extends CreateRecord
     {
         $customer = Customer::firstOrCreate(
             ['name' => $data['customer_name']],
-            ['phone' => $data['customer_phone']],
+            [
+                'phone' => $data['customer_phone'],
+                'address' => $data['alamat_pengantaran'],
+            ]
         );
 
         $data['customer_id'] = $customer->id;
 
-        unset($data['customer_name'], $data['customer_phone']);
+        unset($data['customer_name'], $data['customer_phone'], $data['alamat_pengantaran']);
 
         return $data;
     }
+
 
     protected function beforeCreate(): void
     {
