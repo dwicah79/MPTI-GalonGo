@@ -15,7 +15,7 @@ class OtherTransaction extends Model
         'price',
     ];
 
-    public function transaction()
+    public function kurir()
     {
         return $this->belongsTo(Kurir::class, 'kurir_id');
     }
