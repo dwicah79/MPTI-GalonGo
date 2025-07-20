@@ -15,17 +15,27 @@ class CreateNewTransaction extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $existingCustomer = Customer::where('phone', $data['customer_phone'])->first();
+        if ($existingCustomer) {
+            Notification::make()
+                ->title('No HP sudah terdaftar!')
+                ->body('Nomor HP tersebut sudah digunakan oleh pelanggan lain.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+        }
         $customer = Customer::firstOrCreate(
             ['name' => $data['customer_name']],
             [
                 'phone' => $data['customer_phone'],
-                'address' => $data['alamat_pengantaran'],
+                'address' => $data['address'],
             ]
         );
 
         $data['customer_id'] = $customer->id;
 
-        unset($data['customer_name'], $data['customer_phone'], $data['alamat_pengantaran']);
+        unset($data['customer_name'], $data['customer_phone'], $data['address']);
 
         return $data;
     }
