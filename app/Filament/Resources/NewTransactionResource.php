@@ -28,21 +28,6 @@ class NewTransactionResource extends Resource
 
     protected static ?string $navigationLabel = 'Transaksi';
 
-
-    public static function mutateFormDataBeforeCreate(array $data): array
-    {
-        $customer = Customer::firstOrCreate(
-            ['name' => $data['customer_name']],
-            ['phone' => $data['customer_phone']],
-        );
-
-        $data['customer_id'] = $customer->id;
-
-        unset($data['customer_name'], $data['customer_phone']);
-
-        return $data;
-    }
-
     public static function form(Form $form): Form
     {
         return $form
@@ -124,7 +109,7 @@ class NewTransactionResource extends Resource
                         ->visible(fn(callable $get) => $get('pengantaran') === 'diantar')
                         ->requiredIf('pengantaran', 'diantar'),
 
-                    Textarea::make('alamat_pengantaran')
+                    Textarea::make('address')
                         ->label('Alamat Pengantaran')
                         ->visible(fn(callable $get) => $get('pengantaran') === 'diantar')
                         ->requiredIf('pengantaran', 'diantar'),
