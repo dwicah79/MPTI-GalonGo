@@ -24,7 +24,8 @@ class NewTransactionResource extends Resource
 {
     protected static ?string $model = NewTransaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+
     protected static ?string $navigationLabel = 'Transaksi';
 
 
@@ -32,7 +33,7 @@ class NewTransactionResource extends Resource
     {
         $customer = Customer::firstOrCreate(
             ['name' => $data['customer_name']],
-            ['phone' => $data['customer_phone']]
+            ['phone' => $data['customer_phone']],
         );
 
         $data['customer_id'] = $customer->id;
@@ -117,6 +118,11 @@ class NewTransactionResource extends Resource
                         ])
                         ->required()
                         ->reactive(),
+                    Select::make('kurir_id')
+                        ->label('Kurir')
+                        ->options(fn() => \App\Models\Kurir::pluck('name', 'id'))
+                        ->visible(fn(callable $get) => $get('pengantaran') === 'diantar')
+                        ->requiredIf('pengantaran', 'diantar'),
 
                     Textarea::make('alamat_pengantaran')
                         ->label('Alamat Pengantaran')
@@ -171,6 +177,15 @@ class NewTransactionResource extends Resource
 
                 Tables\Columns\TextColumn::make('pengantaran')
                     ->label('Pengantaran'),
+
+                Tables\Columns\TextColumn::make('kurir.name')
+                    ->label('Kurir')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (!$record || $record->pengantaran !== 'diantar') {
+                            return '-';
+                        }
+                        return $state ?? '-';
+                    }),
 
                 Tables\Columns\TextColumn::make('alamat_pengantaran')
                     ->label('Alamat')
