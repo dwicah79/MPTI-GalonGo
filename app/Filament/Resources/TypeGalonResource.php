@@ -88,4 +88,14 @@ class TypeGalonResource extends Resource
             'edit' => Pages\EditTypeGalon::route('/{record}/edit'),
         ];
     }
+
+    public static function getLabel(): string
+    {
+        return 'Data Kurir';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Data Kurir';
+    }
 }
