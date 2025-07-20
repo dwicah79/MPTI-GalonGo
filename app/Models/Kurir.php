@@ -15,4 +15,9 @@ class Kurir extends Model
     {
         return $this->hasMany(NewTransaction::class, 'kurir_id');
     }
+
+    public function otherTransactions()
+    {
+        return $this->hasMany(OtherTransaction::class, 'kurir_id');
+    }
 }
