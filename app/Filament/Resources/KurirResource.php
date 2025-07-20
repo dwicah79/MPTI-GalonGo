@@ -19,7 +19,7 @@ class KurirResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?string $navigationLabel = 'Kurir';
+    protected static ?string $navigationLabel = 'Pegawai & Kurir';
 
 
     public static function form(Form $form): Form
@@ -90,11 +90,11 @@ class KurirResource extends Resource
 
     public static function getLabel(): string
     {
-        return 'Data Kurir';
+        return 'Data Pegawai & Kurir';
     }
 
     public static function getPluralLabel(): string
     {
-        return 'Data Kurir';
+        return 'Data Pegawai & Kurir';
     }
 }
