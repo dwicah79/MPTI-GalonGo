@@ -223,6 +223,7 @@ class NewTransactionResource extends Resource
             'index' => Pages\ListNewTransactions::route('/'),
             'create' => Pages\CreateNewTransaction::route('/create'),
             'edit' => Pages\EditNewTransaction::route('/{record}/edit'),
+            'laporan' => Pages\LaporanPenjualan::route('/laporan'),
         ];
     }
 
