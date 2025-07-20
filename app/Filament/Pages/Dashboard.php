@@ -16,6 +16,7 @@ class Dashboard extends Page
     public $totalPendapatan;
     public $totalTransaksi;
     public $totalPengeluaran;
+    public $pendapatanBersih;
     public $chartDataPengeluaran = [];
 
     public $chartLabels = [];
@@ -28,6 +29,7 @@ class Dashboard extends Page
         $this->totalPendapatan = DB::table('new_transactions')->sum('harga_total');
         $this->totalTransaksi = DB::table('new_transactions')->count();
         $this->totalPengeluaran = DB::table('other_transactions')->sum('price');
+        $this->pendapatanBersih = $this->totalPendapatan - $this->totalPengeluaran;
 
         $filter = request('filter', 'daily');
 
