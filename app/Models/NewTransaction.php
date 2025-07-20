@@ -25,4 +25,9 @@ class NewTransaction extends Model
         return $this->belongsTo(TypeGalon::class, 'id_type_galon');
     }
 
+    public function kurir()
+    {
+        return $this->belongsTo(Kurir::class, 'kurir_id');
+    }
+
 }
